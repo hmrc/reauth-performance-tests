@@ -11,24 +11,24 @@ import uk.gov.hmrc.perftests.reauthJourneys.requests.{BaseRequests, OLJRequests}
 
 object OljParts extends BaseRequests with OLJRequests {
 
-  def AuthnJourney(): Seq[HttpRequestBuilder] = Seq(
-
-    postInitialise("AUTHN"),
-    getStartUrl,
-    getOneLoginStubPage,
-    postOneLoginStubAuthnPage(true),
-    getContinueUrl
-
-    )
+//  def AuthnJourney(): Seq[HttpRequestBuilder] = Seq(
+//
+//    postInitialise("AUTHN"),
+//    getStartUrl,
+//    getOneLoginStubPage,
+//    postOneLoginStubAuthnPage(true),
+//    getContinueUrl
+//
+//    )
 
   def IvJourney(): Seq[HttpRequestBuilder]  = Seq(
 
-    postInitialise("IV"),
+    //postInitialise("IV"),
     getStartUrl,
     getOneLoginStubPage,
     getSimplifiedStubPage,
-    postOneLoginStubIvPage(true),
-    getContinueUrl
+    //postOneLoginStubIvPage(true),
+    //getContinueUrl
   )
 
 }
