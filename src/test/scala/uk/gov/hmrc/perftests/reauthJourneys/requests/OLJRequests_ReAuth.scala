@@ -34,7 +34,7 @@ trait OLJRequests_ReAuth extends BaseRequests {
   def getCentralAuthDemoPage: HttpRequestBuilder = http("GET start url for CentralAuthDemo Page")
     .get("http://localhost:15009/centralised-authorisation-demo/home")
     .check(
-      status.is(200),
+      status.is(200)
       //header("Location").saveAs("authorizeUrl")
     )
 
@@ -47,8 +47,9 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
   def getBackendCall1: HttpRequestBuilder = http("GET Sign in to HMRC page")
     .get("${authorizeUrl}")
-    .check(status.is(303),
-      header("Location").saveAs("authorizeUrl1")
+    .check(
+      status.is(303),
+      header("Location").saveAs("authorizeUrl1"))
       //saveNonce,
       //saveState,
       //saveFormPostUrl,
@@ -57,9 +58,10 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
   def getBackendCall2: HttpRequestBuilder = http("GET Sign in to HMRC page")
     .get("${authorizeUrl1}")
-    .check(status.is(303),
-      header("Location").saveAs("authorizeUrl2")
-    .check(saveCsrfToken)
+    .check(
+      status.is(303),
+      header("Location").saveAs("authorizeUrl2"))
+    //.check(saveCsrfToken)
       //saveFormPostUrl,
       //currentLocationRegex("(.*)/one-login-stub/authorize-simplifed?(.*)"))
 

@@ -10,4 +10,6 @@ then
     exit 1
 fi
 
-sbt -DrunLocal=true -Dperftest.runSmokeTest=true -DjourneysToRun.0=one-login-iv-journey
+#sbt -DrunLocal=true -Dperftest.runSmokeTest=true -DjourneysToRun.0=one-login-iv-journey
+
+sbt -DrunLocal=true -Dperftest.runSmokeTest=true -DjourneysToRun.0=reauth-journeys Gatling/test

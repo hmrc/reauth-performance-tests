@@ -3,7 +3,6 @@
  *
  */
 
-
 package uk.gov.hmrc.perftests.reauthJourneys.common
 
 import com.nimbusds.jwt.{JWTClaimsSet, SignedJWT}

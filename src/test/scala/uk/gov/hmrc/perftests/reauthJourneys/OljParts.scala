@@ -6,10 +6,11 @@
 package uk.gov.hmrc.perftests.reauthJourneys
 
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.reauthJourneys.requests.{BaseRequests, OLJRequests}
+import uk.gov.hmrc.perftests.reauthJourneys.requests.{BaseRequests, OLJRequests_ReAuth}
 
 
-object OljParts extends BaseRequests with OLJRequests {
+
+object ReAuthParts extends BaseRequests with OLJRequests_ReAuth {
 
 //  def AuthnJourney(): Seq[HttpRequestBuilder] = Seq(
 //
@@ -24,9 +25,13 @@ object OljParts extends BaseRequests with OLJRequests {
   def IvJourney(): Seq[HttpRequestBuilder]  = Seq(
 
     //postInitialise("IV"),
-    getStartUrl,
-    getOneLoginStubPage,
-    getSimplifiedStubPage,
+    //getStartUrl,
+    getCentralAuthDemoPage,
+    getReAuth,
+    getBackendCall1,
+    getBackendCall2,
+    //getOneLoginStubPage,
+    //getSimplifiedStubPage,
     //postOneLoginStubIvPage(true),
     //getContinueUrl
   )

@@ -41,12 +41,15 @@ class BasicSimulation extends PerformanceTestRunner {
 
   }
 
-  setup("one-login-authn", "User successfully logs into or creates an account").withRequests(OljParts.AuthnJourney(): _*)
-  setup("one-login-iv", "User successfully verifies their identity").withRequests(OljParts.IvJourney(): _*)
-  setup("api-logout", "User successfully logout").withActions(APIRemoteLogoutParts.postRemoteLogout(): _*)
-  setup("front-channel-logout", "User successfully logs out of GDS").withActions(APIRemoteLogoutParts.postFrontChannelLogout(): _*)
+  //setup("one-login-authn", "User successfully logs into or creates an account").withRequests(OljParts.AuthnJourney(): _*)
+  //setup("one-login-iv", "User successfully verifies their identity").withRequests(OljParts.IvJourney(): _*)
+  //setup("api-logout", "User successfully logout").withActions(APIRemoteLogoutParts.postRemoteLogout(): _*)
+  //setup("front-channel-logout", "User successfully logs out of GDS").withActions(APIRemoteLogoutParts.postFrontChannelLogout(): _*)
+
+  setup("reauth-journeys", "User successfully logs into or creates an account").withRequests(ReAuthParts.IvJourney(): _*)
 
 
   runSimulation()
+
 
 }
