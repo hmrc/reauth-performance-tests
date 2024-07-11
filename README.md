@@ -1,23 +1,14 @@
-**This is a template README.md.  Be sure to update this with project specific content that describes your performance test project.**
 
-# reauth-performance-tests
+# one-login-journeys-performance-tests
 
-Performance test suite for the `<digital service name>`, using [performance-test-runner](https://github.com/hmrc/performance-test-runner) under the hood.
-
-## Pre-requisites
+Performance test suite for the `one-login-gateway` and `one-login-gateway-frontend` services, using [performance-test-runner](https://github.com/hmrc/performance-test-runner) under the hood.
 
 ### Services
 
-Start Mongo Docker container as follows:
+Start `OLJ_ALL` services as follows:
 
 ```bash
-docker run --rm -d -p 27017:27017 --name mongo mongo:4.4
-```
-
-Start `PLATFORM_TEST_EXAMPLE_UI_JOURNEY_TESTS` services as follows:
-
-```bash
-sm2 --start PLATFORM_TEST_EXAMPLE_UI_JOURNEY_TESTS
+sm2 --start OLJ_ALL
 ```
 
 ### Logging
@@ -30,43 +21,10 @@ Do **NOT** run a full performance test against staging from your local machine. 
 
 ## Tests
 
-Run smoke test (locally) as follows:
-
-```bash
-sbt -Dperftest.runSmokeTest=true -DrunLocal=true gatling:test
-```
-
-Run full performance test (locally) as follows:
-
-```bash
-sbt -DrunLocal=true gatling:test
-```
-
-Run smoke test (staging) as follows:
-
-```bash
-sbt -Dperftest.runSmokeTest=true -DrunLocal=false gatling:test
-```
-
-## Scalafmt
-
-Check all project files are formatted as expected as follows:
-
-```bash
-sbt scalafmtCheckAll scalafmtCheck
-```
-
-Format `*.sbt` and `project/*.scala` files as follows:
-
-```bash
-sbt scalafmtSbt
-```
-
-Format all project files as follows:
-
-```bash
-sbt scalafmtAll
-```
+Run smoke test (local terminal) as follows:
+* ./olj-smoke-test-local.sh
+* ./acf-smoke-test-local.sh
+* ./api-logout-smoke-test-local.sh
 
 ## License
 

@@ -1,0 +1,13 @@
+#!/bin/sh -xe
+
+sm2 --stop ONE_LOGIN_GATEWAY ONE_LOGIN_STUB IDENTITY_PROVIDER_GATEWAY IDENTITY_PROVIDER_ACCOUNT_CONTEXT CENTRALISED_AUTHORISATION_SERVER_HS CENTRALISED_AUTHORISATION_STUBS AUTH
+sleep 5
+sm2 --start ONE_LOGIN_GATEWAY ONE_LOGIN_STUB IDENTITY_PROVIDER_GATEWAY IDENTITY_PROVIDER_ACCOUNT_CONTEXT CENTRALISED_AUTHORISATION_SERVER_HS CENTRALISED_AUTHORISATION_STUBS AUTH --wait 60 --noprogress \
+
+if [ $? != 0 ]
+then
+    echo "Failed to start all services"
+    exit 1
+fi
+
+sbt -DrunLocal=true -Dperftest.runSmokeTest=true -DjourneysToRun.0=api-logout -DjourneysToRun.1=front-channel-logout Gatling/test
