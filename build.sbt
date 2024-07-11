@@ -1,4 +1,4 @@
-name := "one-login-journeys-performance-tests"
+name := "reauth-journeys-performance-tests"
 
 version := "0.1"
 
