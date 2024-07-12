@@ -6,7 +6,7 @@
 package uk.gov.hmrc.perftests.reauthJourneys.requests
 
 import io.gatling.core.Predef._
-import io.gatling.http.Predef._
+import io.gatling.http.Predef.{header, _}
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions.{saveCsrfToken, saveOlfgJourneyId}
 
@@ -83,27 +83,14 @@ trait OLJRequests_ReAuth extends BaseRequests {
     .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
     .check(
       status.is(200))
-      //header("Location").saveAs("authorizeUrl4")
-//  def postOneLoginStubIvPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for IV journey")
-//    .post(s"$oljStub/$${ivStubPostUrl}")
-//    .formParam("state", "${state}")
-//    .formParam("nonce", "${nonce}")
-//    .formParam("vtr", "[\"Cl.Cm.P2\"]")
-//    .formParam("userInfo.success", s"$success")
-//    .formParam("userInfo.sub", "ALLOK404238J99CD")
-//    .formParam("userInfo.email", "email@email.com")
-//    .formParam("userInfo.vc.cs.name[0].nameParts[0].type", "GivenName")
-//    .formParam("userInfo.vc.cs.name[0].nameParts[0].value", "Jim")
-//    .formParam("userInfo.vc.cs.name[0].nameParts[1].type", "FamilyName")
-//    .formParam("userInfo.vc.cs.name[0].nameParts[1].value", "Ferguson")
-//    .formParam("userInfo.vc.cs.birthDate[0].value", "1948-04-23")
-//    .formParam("userInfo.addresses[0].postalCode", "EC4 2AA")
-//    .formParam("submit", "submit")
-//    .check(status.is(303))
-//    .check(header("Location").saveAs("continueUrl"))
-//  def getContinueUrl: HttpRequestBuilder = http("GET continue url")
-//    .get("${continueUrl}")
-//    .check(status.is(303))
-//    .check(header("Location").is("https://www.example.com"))
+
+  def postOneLoginPostAuthorizePage: HttpRequestBuilder = http("POST OneLoginAuth Page")
+    .post("http://localhost:12000/one-login-stub/authorize")
+    .check(
+      status.is(303),
+      header("Location").saveAs("authorizeUrl5")
+      //header("Location").saveAs("authorizeUrl")
+    )
+
 
 }
