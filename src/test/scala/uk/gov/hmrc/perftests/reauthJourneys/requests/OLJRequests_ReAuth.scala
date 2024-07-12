@@ -8,7 +8,7 @@ package uk.gov.hmrc.perftests.reauthJourneys.requests
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions.saveCsrfToken
+import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions.{saveCsrfToken, saveOlfgJourneyId}
 
 trait OLJRequests_ReAuth extends BaseRequests {
 
@@ -45,39 +45,45 @@ trait OLJRequests_ReAuth extends BaseRequests {
       header("Location").saveAs("authorizeUrl")
     )
 
-  def getBackendCall1: HttpRequestBuilder = http("GET Sign in to HMRC page")
+  def getBackendCall1: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
     .get("${authorizeUrl}")
     .check(
       status.is(303),
       header("Location").saveAs("authorizeUrl1"))
-      //saveNonce,
-      //saveState,
-      //saveFormPostUrl,
-      //saveSimplifiedJourneyUrl,
-      //currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
 
-  def getBackendCall2: HttpRequestBuilder = http("GET Sign in to HMRC page")
-    .get("${authorizeUrl1}")
+
+  def getBackendCall2: HttpRequestBuilder = http("GET Sign in to HMRC page Call2")
+    .get("${authorizeUrl1}").check(saveCsrfToken)
     .check(
-      status.is(303),
-      header("Location").saveAs("authorizeUrl2"))
+      status.is(200))
     //.check(saveCsrfToken)
       //saveFormPostUrl,
       //currentLocationRegex("(.*)/one-login-stub/authorize-simplifed?(.*)"))
 
 
-//  def postOneLoginStubAuthnPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for ReAuth journey")
-//    .post("$${authorizeUrl2}")
-//    .formParam("state", "${state}")
-//    .formParam("nonce", "${nonce}")
-//    .formParam("vtr", "[\"Cl.Cm\"]")
-//    .formParam("userInfo.success", s"$success")
-//    .formParam("userInfo.sub", "ALLOK404238J99CD")
-//    .formParam("userInfo.email", "email@email.com")
-//    .formParam("submit", "submit")
-//    .check(status.is(303))
-//    .check(header("Location").saveAs("continueUrl"))
-//
+  def postReAuthStubAuthnPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for ReAuth journey")
+    .post("$${authorizeUrl2}").check(saveOlfgJourneyId)
+    .formParam("""csrfToken""", """${csrfToken}""")
+    .formParam("""signInType""", "oneLogin")
+    .check(status.is(303))
+    .check(header("Location").saveAs("continueUrl"))
+    header("Location").saveAs("authorizeUrl3")
+
+
+  def getBackendFirstCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
+    .get("${authorizeUrl3}")
+    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
+    .check(
+      status.is(303),
+      header("Location").saveAs("authorizeUrl4"))
+
+
+  def getBackend2SecondCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
+    .get("${authorizeUrl4}")
+    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
+    .check(
+      status.is(200))
+      //header("Location").saveAs("authorizeUrl4")
 //  def postOneLoginStubIvPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for IV journey")
 //    .post(s"$oljStub/$${ivStubPostUrl}")
 //    .formParam("state", "${state}")
