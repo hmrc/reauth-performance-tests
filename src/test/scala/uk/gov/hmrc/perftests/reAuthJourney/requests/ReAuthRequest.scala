@@ -23,6 +23,10 @@ import uk.gov.hmrc.perftests.reAuthJourney.common.RequestFunctions._
 
 trait ReAuthRequest extends BaseRequests {
 
+  //val cadUrl = centralised-authorisation-demo Url
+  val cadUrl: String = baseUrlFor("centralised-authorisation-demo")
+  val oljStub: String = baseUrlFor("one-login-stub")
+
 //  def postInitialise(action: String): HttpRequestBuilder = http("Create account in IDP store")
 //    .post(s"$olgUrl/one-login-gateway/initialise")
 //    .body(StringBody(
@@ -39,14 +43,14 @@ trait ReAuthRequest extends BaseRequests {
 //      jsonPath("$..start-url").saveAs("startUrl"))
 
   def getStartUrl: HttpRequestBuilder = http("Req:1 GET HOME")
-    .get("http://localhost:15009/centralised-authorisation-demo/home")
+    .get(s"$cadUrl/centralised-authorisation-demo/home")
     .check(
       status.is(200),
 //        header("Set-Cookie").saveAs("authorizeUrl"),
     )
 
   def getReAuthUrl: HttpRequestBuilder = http("Req:2 GET RE_AUTH")
-    .get("http://localhost:15009/centralised-authorisation-demo/RE_AUTH")
+    .get(s"$cadUrl/centralised-authorisation-demo/RE_AUTH")
     .check(
       status.is(303),
       header("Location").saveAs("reAuthUrl")
@@ -89,7 +93,7 @@ trait ReAuthRequest extends BaseRequests {
     )
 
   def postSubmitJourney: HttpRequestBuilder = http("Req:8 SUBMIT JOURNEY")
-    .post("http://localhost:12000/one-login-stub/authorize")
+    .post(s"$oljStub/one-login-stub/authorize")
     .formParam("state", """${olfgJourneyId}""")
     .formParam("nonce", """${olfgNonce}""")
     .formParam("vtr", """["Cl.Cm"]""")
