@@ -12,24 +12,6 @@ import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions.{saveCsrfTok
 
 trait OLJRequests_ReAuth extends BaseRequests {
 
-  //val olgUrl: String = baseUrlFor("one-login-gateway")
-  //val olgFeUrl: String = baseUrlFor("one-login-gateway-frontend")
-  //val oljStub: String = baseUrlFor("one-login-stub")
-
-//  def postInitialise(action: String): HttpRequestBuilder = http("Create account in IDP store")
-//    .post(s"$olgUrl/one-login-gateway/initialise")
-//    .body(StringBody(
-//      s"""|
-//          |{
-//          |  "action": "$action",
-//          |  "completion-url": "https://www.example.com"
-//          |}
-//          |""".stripMargin))
-//    .headers(Map("Content-Type" -> "application/json"))
-//    .headers(Map("User-Agent" -> "identity-provider-gateway-frontend"))
-//    .check(
-//      status.is(200),
-//      jsonPath("$..start-url").saveAs("startUrl"))
 
   def getCentralAuthDemoPage: HttpRequestBuilder = http("GET start url for CentralAuthDemo Page")
     .get("http://localhost:15009/centralised-authorisation-demo/home")
@@ -84,13 +66,42 @@ trait OLJRequests_ReAuth extends BaseRequests {
     .check(
       status.is(200))
 
-  def postOneLoginPostAuthorizePage: HttpRequestBuilder = http("POST OneLoginAuth Page")
+  def postOneLoginPostAuthorizePage1st: HttpRequestBuilder = http("POST OneLoginAuth Page")
     .post("http://localhost:12000/one-login-stub/authorize")
+    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
+    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
+    .formParam("vtr", """["Cl.Cm"]""")
+    .formParam("isReauth", "false")
+    .formParam("userInfo.success", "true")
+    .formParam("userInfo.sub", "ALLOK404238J99CD")
+    .formParam("userInfo.email", "66666666email@email.com")
+    .formParam("userInfo.failureReason", "")
+    .formParam("userInfo.otherFailureReason", "")
+    .formParam("userInfo.failureDescription", "")
+    .formParam("submit", "submit")
     .check(
       status.is(303),
-      header("Location").saveAs("authorizeUrl5")
-      //header("Location").saveAs("authorizeUrl")
+      header("Location").saveAs("continueUrl5")
+
     )
 
+  def postOneLoginPostAuthorizePage2nd: HttpRequestBuilder = http("POST OneLoginAuth Page")
+    .post("http://localhost:12000/one-login-stub/authorize")
+    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
+    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
+    .formParam("vtr", """["Cl.Cm"]""")
+    .formParam("isReauth", "false")
+    .formParam("userInfo.success", "true")
+    .formParam("userInfo.sub", "ALLOK404238J99CD")
+    .formParam("userInfo.email", "66666666email@email.com")
+    .formParam("userInfo.failureReason", "")
+    .formParam("userInfo.otherFailureReason", "")
+    .formParam("userInfo.failureDescription", "")
+    .formParam("submit", "submit")
+    .check(
+      status.is(303),
+      header("Location").saveAs("continueUrl5")
+
+    )
 
 }

@@ -32,7 +32,8 @@ object ReAuthParts extends BaseRequests with OLJRequests_ReAuth {
     getBackendCall2,
     postReAuthStubAuthnPage(true),
     getBackendFirstCallAfterPost,
-    postOneLoginPostAuthorizePage,
+    postOneLoginPostAuthorizePage1st,
+    postOneLoginPostAuthorizePage2nd,
     //getSimplifiedStubPage,
     //getContinueUrl
   )
