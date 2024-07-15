@@ -35,20 +35,21 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
 
   def getBackendCall2: HttpRequestBuilder = http("GET Sign in to HMRC page Call2")
-    .get("${authorizeUrl1}").check(saveCsrfToken)
+    .get("${authorizeUrl1}")
     .check(
+      saveCsrfToken,
       status.is(200))
     //.check(saveCsrfToken)
       //saveFormPostUrl,
-      //currentLocationRegex("(.*)/one-login-stub/authorize-simplifed?(.*)"))
+      //currentLocationRegex("(.*)/one-login-stub/authorize-simplifed?(.*)")
 
 
   def postReAuthStubAuthnPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for ReAuth journey")
-    .post("$${authorizeUrl1}").check(saveOlfgJourneyId)
-    .formParam("""csrfToken""", """${csrfToken}""")
+    .post("${authorizeUrl1}")
+    .formParam("""CsrfToken""", """${CsrfToken}""")
     .formParam("""signInType""", "oneLogin")
+    //.check(saveOlfgJourneyId)
     .check(status.is(303))
-    .check(header("Location").saveAs("continueUrl"))
     header("Location").saveAs("authorizeUrl3")
 
 
