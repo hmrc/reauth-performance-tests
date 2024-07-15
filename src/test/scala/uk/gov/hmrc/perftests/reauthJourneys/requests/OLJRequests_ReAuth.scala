@@ -44,7 +44,7 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
 
   def postReAuthStubAuthnPage(success: Boolean): HttpRequestBuilder = http("POST authorize url/one login stub for ReAuth journey")
-    .post("$${authorizeUrl2}").check(saveOlfgJourneyId)
+    .post("$${authorizeUrl1}").check(saveOlfgJourneyId)
     .formParam("""csrfToken""", """${csrfToken}""")
     .formParam("""signInType""", "oneLogin")
     .check(status.is(303))
@@ -81,9 +81,8 @@ trait OLJRequests_ReAuth extends BaseRequests {
     .formParam("submit", "submit")
     .check(
       status.is(303),
-      header("Location").saveAs("continueUrl5")
+      header("Location").saveAs("continueUrl5"))
 
-    )
 
   def postOneLoginPostAuthorizePage2nd: HttpRequestBuilder = http("POST OneLoginAuth Page")
     .post("http://localhost:12000/one-login-stub/authorize")
@@ -100,8 +99,6 @@ trait OLJRequests_ReAuth extends BaseRequests {
     .formParam("submit", "submit")
     .check(
       status.is(303),
-      header("Location").saveAs("continueUrl5")
-
-    )
+      header("Location").saveAs("continueUrl5"))
 
 }

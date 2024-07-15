@@ -24,18 +24,15 @@ object ReAuthParts extends BaseRequests with OLJRequests_ReAuth {
 
   def IvJourney(): Seq[HttpRequestBuilder]  = Seq(
 
-    //postInitialise("IV"),
-    //getStartUrl,
     getCentralAuthDemoPage,
     getReAuth,
-    getBackendCall1,
-    getBackendCall2,
-    postReAuthStubAuthnPage(true),
-    getBackendFirstCallAfterPost,
-    postOneLoginPostAuthorizePage1st,
-    postOneLoginPostAuthorizePage2nd,
-    //getSimplifiedStubPage,
-    //getContinueUrl
+//    getBackendCall1,
+//    getBackendCall2,
+//    postReAuthStubAuthnPage(true),
+//    getBackendFirstCallAfterPost,
+//    postOneLoginPostAuthorizePage1st,
+//    postOneLoginPostAuthorizePage2nd,
+
   )
 
 }
