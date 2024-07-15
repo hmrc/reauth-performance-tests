@@ -23,8 +23,8 @@ import uk.gov.hmrc.perftests.reAuthJourney.common.RequestFunctions._
 
 trait ReAuthRequest extends BaseRequests {
 
-  //val cadUrl = centralised-authorisation-demo Url
-  val cadUrl: String = baseUrlFor("centralised-authorisation-demo")
+  // val cadUrl = centralised-authorisation-demo Url
+  val cadUrl: String  = baseUrlFor("centralised-authorisation-demo")
   val oljStub: String = baseUrlFor("one-login-stub")
 
 //  def postInitialise(action: String): HttpRequestBuilder = http("Create account in IDP store")
@@ -44,29 +44,30 @@ trait ReAuthRequest extends BaseRequests {
 
   def getStartUrl: HttpRequestBuilder = http("Req:1 GET HOME")
     .get(s"$cadUrl/centralised-authorisation-demo/home")
-    .check(
-      status.is(200),
-//        header("Set-Cookie").saveAs("authorizeUrl"),
-    )
+    .check(status.is(200), currentLocationRegex("(.*)/centralised-authorisation-demo/home(.*)"))
 
   def getReAuthUrl: HttpRequestBuilder = http("Req:2 GET RE_AUTH")
     .get(s"$cadUrl/centralised-authorisation-demo/RE_AUTH")
     .check(
       status.is(303),
-      header("Location").saveAs("reAuthUrl")
+      header("Location").saveAs("reAuthUrl"),
+      currentLocationRegex("(.*)/centralised-authorisation-demo/RE_AUTH(.*)")
     )
 
   def getNavigateReAuthUrl: HttpRequestBuilder = http("Req:3 GET NAVIGATE RE_AUTH URL")
     .get("${reAuthUrl}")
     .check(
       status.is(303),
-      header("Location").saveAs("reAuthContinue")
-
+      header("Location").saveAs("reAuthContinue"),
+      currentLocationRegex("(.*)/centralised-authorisation-server/interact/(.*)")
     )
 
   def getContinueReAuthUrl: HttpRequestBuilder = http("Req:4 GET CONTINUE RE_AUTH URL")
-    .get("${reAuthContinue}").check(saveCsrfToken)
-    .check(status.is(200),
+    .get("${reAuthContinue}")
+    .check(saveCsrfToken)
+    .check(
+      status.is(200),
+      currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
     )
 
   def postContinueReAuthUrl: HttpRequestBuilder = http("Req:5 POST CONTINUE RE_AUTH URL")
@@ -74,23 +75,26 @@ trait ReAuthRequest extends BaseRequests {
     .formParam("""csrfToken""", """${csrfToken}""")
     .formParam("""signInType""", "oneLogin")
     .check(saveOlfgJourneyId)
-    .check(status.is(303),
-      header("Location").saveAs("reAuthContinueWithOljfId")
+    .check(
+      status.is(303),
+      header("Location").saveAs("reAuthContinueWithOljfId"),
+      currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
     )
 
   def getOlfjJourneyId: HttpRequestBuilder = http("Req:6 START OLFJ Journey ID")
     .get("${reAuthContinueWithOljfId}")
-    .formParam("""olfgJourneyId""", "olfgJourneyId")
+    .formParam("""olfgJourneyId""", """${olfgJourneyId}""")
     .check(saveOlfgSignedJWT)
     .check(saveOlfgNonce)
-    .check(status.is(303),
-      header("Location").saveAs("reAuthContinueWithAuthorizeResponse")
+    .check(
+      status.is(303),
+      header("Location").saveAs("reAuthContinueWithAuthorizeResponse"),
+      currentLocationRegex("(.*)/one-login-gateway/start?(.*)")
     )
 
   def getAuthorizeResponseOlfjJourneyId: HttpRequestBuilder = http("Req:7 AUTHORIZE RESPONSE")
     .get("${reAuthContinueWithAuthorizeResponse}")
-    .check(status.is(200),
-    )
+    .check(status.is(200), currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
 
   def postSubmitJourney: HttpRequestBuilder = http("Req:8 SUBMIT JOURNEY")
     .post(s"$oljStub/one-login-stub/authorize")
@@ -105,7 +109,12 @@ trait ReAuthRequest extends BaseRequests {
     .formParam("userInfo.otherFailureReason", "")
     .formParam("userInfo.failureDescription", "")
     .formParam("submit", "submit")
-    .check(status.is(303),
-    )
+    .check(status.is(303), currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
+    .check(header("Location").saveAs("continueUrl"))
+
+  def getContinueUrl: HttpRequestBuilder = http("GET continue url")
+    .get("${continueUrl}")
+    .check(status.is(303))
+    .check(header("Location").is("https://www.example.com"))
 
 }
