@@ -15,7 +15,7 @@ import io.gatling.http.check.header.HttpHeaderRegexCheckType
 
 object RequestFunctions {
 
-  val CsrfToken = """<input type="hidden" name="csrfToken" value="([^"]+)""""
+  val csrfToken = """<input type="hidden" name="csrfToken" value="([^"]+)""""
   val interactRefPattern: String = """/interact/([^"]+)"""
   val initialiseKeyPattern: String = """/access-hmrc-services/sign-in/selector/([^"]+)"""
   val hashInteractRefPattern: String = """hash=([^"]+)"""
@@ -25,7 +25,7 @@ object RequestFunctions {
   val bearerPattern: String = """^GNAP.*?(Bearer .*?)$|^(Bearer .*?)GNAP.*?$|^(Bearer .*?)$"""
 
   def saveCsrfToken: CheckBuilder[RegexCheckType, String, String] = regex(
-    _ => CsrfToken
+    _ => csrfToken
   ).saveAs("CsrfToken")
 
   def saveInteractRef: CheckBuilder[HttpHeaderRegexCheckType, Response, String] = headerRegex(
