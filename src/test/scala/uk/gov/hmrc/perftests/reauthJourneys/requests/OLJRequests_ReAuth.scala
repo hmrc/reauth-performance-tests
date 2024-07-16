@@ -49,23 +49,24 @@ trait OLJRequests_ReAuth extends BaseRequests {
     .formParam("""CsrfToken""", """${CsrfToken}""")
     .formParam("""signInType""", "oneLogin")
     //.check(saveOlfgJourneyId)
-    .check(status.is(303))
-    header("Location").saveAs("authorizeUrl3")
-
-
-  def getBackendFirstCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
-    .get("${authorizeUrl3}")
-    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
     .check(
       status.is(303),
-      header("Location").saveAs("authorizeUrl4"))
+    header("Location").saveAs("authorizeUrl3"))
 
 
-  def getBackend2SecondCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
-    .get("${authorizeUrl4}")
-    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
-    .check(
-      status.is(200))
+//  def getBackendFirstCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
+//    .get("${authorizeUrl3}")
+//    //.formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
+//    .check(
+//      status.is(303),
+//      header("Location").saveAs("authorizeUrl4"))
+//
+//
+//  def getBackend2SecondCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
+//    .get("${authorizeUrl4}")
+//    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
+//    .check(
+//      status.is(200))
 
   def postOneLoginPostAuthorizePage1st: HttpRequestBuilder = http("POST OneLoginAuth Page")
     .post("http://localhost:12000/one-login-stub/authorize")

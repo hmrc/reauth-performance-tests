@@ -29,10 +29,10 @@ object ReAuthParts extends BaseRequests with OLJRequests_ReAuth {
     getBackendCall1,
     getBackendCall2,
     postReAuthStubAuthnPage(true),
-    getBackendFirstCallAfterPost,
-    getBackend2SecondCallAfterPost,
-//    postOneLoginPostAuthorizePage1st,
-//    postOneLoginPostAuthorizePage2nd,
+    //getBackendFirstCallAfterPost,
+    //getBackend2SecondCallAfterPost,
+    postOneLoginPostAuthorizePage1st,
+    postOneLoginPostAuthorizePage2nd,
 
   )
 
