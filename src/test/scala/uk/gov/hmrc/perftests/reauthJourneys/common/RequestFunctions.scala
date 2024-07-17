@@ -19,14 +19,14 @@ object RequestFunctions {
   val interactRefPattern: String = """/interact/([^"]+)"""
   val initialiseKeyPattern: String = """/access-hmrc-services/sign-in/selector/([^"]+)"""
   val hashInteractRefPattern: String = """hash=([^"]+)"""
-  val olfgJourneyIdPattern: String = """Id=([^"]+)"""
+  val olfgJourneyIdPattern: String = """olfgJourneyId=([^"]+)"""
   val olfgSignedJWTPattern: String = """request=([^"]+)"""
   val olfgContinueCodePattern: String = """code=([^"]+)&state="""
   val bearerPattern: String = """^GNAP.*?(Bearer .*?)$|^(Bearer .*?)GNAP.*?$|^(Bearer .*?)$"""
 
   def saveCsrfToken: CheckBuilder[RegexCheckType, String, String] = regex(
     _ => csrfToken
-  ).saveAs("CsrfToken")
+  ).saveAs("csrfToken")
 
   def saveInteractRef: CheckBuilder[HttpHeaderRegexCheckType, Response, String] = headerRegex(
     "Location", interactRefPattern

@@ -8,7 +8,7 @@ package uk.gov.hmrc.perftests.reauthJourneys.requests
 import io.gatling.core.Predef._
 import io.gatling.http.Predef.{header, _}
 import io.gatling.http.request.builder.HttpRequestBuilder
-import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions.{saveCsrfToken, saveOlfgJourneyId}
+import uk.gov.hmrc.perftests.reauthJourneys.common.RequestFunctions._
 
 trait OLJRequests_ReAuth extends BaseRequests {
 
@@ -36,8 +36,8 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
   def getBackendCall2: HttpRequestBuilder = http("GET Sign in to HMRC page Call2")
     .get("${authorizeUrl1}")
+    .check(saveCsrfToken)
     .check(
-      saveCsrfToken,
       status.is(200))
     //.check(saveCsrfToken)
       //saveFormPostUrl,
@@ -46,7 +46,7 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
   def postReAuthStubAuthPage: HttpRequestBuilder = http("POST authorize url/one login stub for ReAuth journey")
     .post("${authorizeUrl1}")
-    .formParam("""CsrfToken""", """${CsrfToken}""")
+    .formParam("""csrfToken""", """${csrfToken}""")
     .formParam("""signInType""", "oneLogin")
     .check(saveOlfgJourneyId)
     .check(
@@ -56,51 +56,51 @@ trait OLJRequests_ReAuth extends BaseRequests {
 
   def getBackendFirstCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
     .get("${authorizeUrl3}")
-    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
+    .formParam("""olfgJourneyId""", """${olfgJourneyId}""")
     .check(
       status.is(303),
       header("Location").saveAs("authorizeUrl4"))
 
 
-//  def getBackend2SecondCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
-//    .get("${authorizeUrl4}")
-//    .formParam("""saveOlfgJourneyId""", """${saveOlfgJourneyId}""")
-//    .check(
-//      status.is(200))
+  def getBackend2SecondCallAfterPost: HttpRequestBuilder = http("GET Sign in to HMRC page Call1")
+    .get("${authorizeUrl4}")
+    .formParam("""olfgJourneyId""", """${olfgJourneyId}""")
+    .check(
+      status.is(200))
 
-//  def postOneLoginPostAuthorizePage1st: HttpRequestBuilder = http("POST OneLoginAuth Page")
-//    .post("http://localhost:12000/one-login-stub/authorize")
-//    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
-//    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
-//    .formParam("vtr", """["Cl.Cm"]""")
-//    .formParam("isReauth", "false")
-//    .formParam("userInfo.success", "true")
-//    .formParam("userInfo.sub", "ALLOK404238J99CD")
-//    .formParam("userInfo.email", "66666666email@email.com")
-//    .formParam("userInfo.failureReason", "")
-//    .formParam("userInfo.otherFailureReason", "")
-//    .formParam("userInfo.failureDescription", "")
-//    .formParam("submit", "submit")
-//    .check(
-//      status.is(303),
-//      header("Location").saveAs("continueUrl5"))
-//
-//
-//  def postOneLoginPostAuthorizePage2nd: HttpRequestBuilder = http("POST OneLoginAuth Page")
-//    .post("http://localhost:12000/one-login-stub/authorize")
-//    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
-//    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
-//    .formParam("vtr", """["Cl.Cm"]""")
-//    .formParam("isReauth", "false")
-//    .formParam("userInfo.success", "true")
-//    .formParam("userInfo.sub", "ALLOK404238J99CD")
-//    .formParam("userInfo.email", "66666666email@email.com")
-//    .formParam("userInfo.failureReason", "")
-//    .formParam("userInfo.otherFailureReason", "")
-//    .formParam("userInfo.failureDescription", "")
-//    .formParam("submit", "submit")
-//    .check(
-//      status.is(303),
-//      header("Location").saveAs("continueUrl5"))
+  def postOneLoginPostAuthorizePage1st: HttpRequestBuilder = http("POST OneLoginAuth Page")
+    .post("http://localhost:12000/one-login-stub/authorize")
+    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
+    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
+    .formParam("vtr", """["Cl.Cm"]""")
+    .formParam("isReauth", "false")
+    .formParam("userInfo.success", "true")
+    .formParam("userInfo.sub", "ALLOK404238J99CD")
+    .formParam("userInfo.email", "66666666email@email.com")
+    .formParam("userInfo.failureReason", "")
+    .formParam("userInfo.otherFailureReason", "")
+    .formParam("userInfo.failureDescription", "")
+    .formParam("submit", "submit")
+    .check(
+      status.is(303),
+      header("Location").saveAs("continueUrl5"))
+
+
+  def postOneLoginPostAuthorizePage2nd: HttpRequestBuilder = http("POST OneLoginAuth Page")
+    .post("http://localhost:12000/one-login-stub/authorize")
+    .formParam("state", "8f431a38-1e51-43e6-ad00-ffb1d3e70608")
+    .formParam("nonce", "aQQpjf_gvlh0Ax9a")
+    .formParam("vtr", """["Cl.Cm"]""")
+    .formParam("isReauth", "false")
+    .formParam("userInfo.success", "true")
+    .formParam("userInfo.sub", "ALLOK404238J99CD")
+    .formParam("userInfo.email", "66666666email@email.com")
+    .formParam("userInfo.failureReason", "")
+    .formParam("userInfo.otherFailureReason", "")
+    .formParam("userInfo.failureDescription", "")
+    .formParam("submit", "submit")
+    .check(
+      status.is(303),
+      header("Location").saveAs("continueUrl5"))
 
 }
