@@ -1,8 +1,8 @@
 #!/bin/sh -xe
 
-sm2 --stop OLJ_ALL IDENTITY_PROVIDER_ACCOUNT_CONTEXT
+sm2 --stop CENTRALISED_AUTHORISATION_ALL
 #sleep 5
-sm2 --start OLJ_ALL IDENTITY_PROVIDER_ACCOUNT_CONTEXT --wait 120 --noprogress \
+sm2 --start CENTRALISED_AUTHORISATION_ALL --wait 120 --noprogress \
 
 if [ $? != 0 ]
 then
