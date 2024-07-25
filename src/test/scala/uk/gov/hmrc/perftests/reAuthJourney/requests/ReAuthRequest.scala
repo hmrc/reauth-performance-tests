@@ -1,6 +1,17 @@
 /*
  * Copyright 2024 HM Revenue & Customs
-
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package uk.gov.hmrc.perftests.reAuthJourney.requests
@@ -50,12 +61,12 @@ trait ReAuthRequest extends BaseRequests {
     .check(saveOlfgJourneyId)
     .check(
       status.is(303),
-      header("Location").saveAs("reAuthContinueWithOljfId"),
+      header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
       currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
     )
 
-  def getOlfjJourneyId: HttpRequestBuilder = http("Req:6 START OLFJ JOURNEY ID")
-    .get("${reAuthContinueWithOljfId}")
+  def getOlfgStartUrl: HttpRequestBuilder = http("Req:6 GET OLFG START URL")
+    .get("${reAuthContinueWithOlfgStartUrl}")
     .formParam("""olfgJourneyId""", """${olfgJourneyId}""")
     .check(saveOlfgSignedJWT)
     .check(saveOlfgNonce)
@@ -65,11 +76,11 @@ trait ReAuthRequest extends BaseRequests {
       currentLocationRegex("(.*)/one-login-gateway/start?(.*)")
     )
 
-  def getAuthorizeResponseOlfjJourneyId: HttpRequestBuilder = http("Req:7 AUTHORIZE RESPONSE")
+  def getAuthorizeResponseOlfg: HttpRequestBuilder = http("Req:7 GET AUTHORIZE RESPONSE")
     .get("${reAuthContinueWithAuthorizeResponse}")
     .check(status.is(200), currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
 
-  def postSubmitJourney: HttpRequestBuilder = http("Req:8 SUBMIT JOURNEY")
+  def postSubmitJourney: HttpRequestBuilder = http("Req:8 POST SUBMIT JOURNEY")
     .post(s"$oljStub/one-login-stub/authorize")
     .formParam("state", """${olfgJourneyId}""")
     .formParam("nonce", """${olfgNonce}""")
@@ -85,11 +96,11 @@ trait ReAuthRequest extends BaseRequests {
     .check(status.is(303), currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
     .check(header("Location").saveAs("continueUrl"))
 
-  def getAuthorizeResponseOlfjJourneyId2: HttpRequestBuilder = http("Req:9 AUTHORIZE RESPONSE FOR RE-SUBMIT JOURNEY")
+  def getAuthorizeResponseOlg: HttpRequestBuilder = http("Req:9 GET AUTHORIZE RESPONSE FOR RE-SUBMIT JOURNEY")
     .get("${reAuthContinueWithAuthorizeResponse}")
     .check(status.is(200), currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"))
 
-  def postReSubmitJourney: HttpRequestBuilder = http("Req:10 RE-SUBMIT JOURNEY")
+  def postReSubmitJourney: HttpRequestBuilder = http("Req:10 POST RE-SUBMIT JOURNEY")
     .post(s"$oljStub/one-login-stub/authorize")
     .formParam("state", """${olfgJourneyId}""")
     .formParam("nonce", """${olfgNonce}""")
