@@ -38,21 +38,64 @@ trait ReAuthRequest extends BaseRequests {
       currentLocationRegex("(.*)/centralised-authorisation-demo/RE_AUTH(.*)")
     )
 
-  def getNavigateReAuthUrl: HttpRequestBuilder = http("Req:3 GET NAVIGATE RE_AUTH URL")
-    .get("${reAuthUrl}")
-    .check(
-      status.is(303),
-      header("Location").saveAs("reAuthContinue"),
-      currentLocationRegex("(.*)/centralised-authorisation-server/interact/(.*)")
-    )
+  def getNavigateReAuthUrl: HttpRequestBuilder = if(runLocal) {
+      http("Req:3 GET NAVIGATE RE_AUTH URL")
+        .get("${reAuthUrl}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reAuthContinue"),
+          currentLocationRegex("(.*)/centralised-authorisation-server/interact/(.*)")
+        )
+    }
+  else http("Req:3 GET NAVIGATE RE_AUTH URL")
+      .get("https://www.staging.tax.service.gov.uk"+s"$${reAuthUrl}")
+      .check(
+        status.is(303),
+        header("Location").saveAs("reAuthContinue"),
+        currentLocationRegex("(.*)/centralised-authorisation-server/interact/(.*)")
+      )
 
-  def getContinueReAuthUrl: HttpRequestBuilder = http("Req:4 GET CONTINUE RE_AUTH URL")
-    .get("${reAuthContinue}")
+
+
+  //  def getNavigateReAuthUrl: HttpRequestBuilder = http("Req:3 GET NAVIGATE RE_AUTH URL")
+//    .get("${reAuthUrl}")
+//    .check(
+//      status.is(303),
+//      header("Location").saveAs("reAuthContinue"),
+//      currentLocationRegex("(.*)/centralised-authorisation-server/interact/(.*)")
+//    )
+
+
+  def getContinueReAuthUrl: HttpRequestBuilder = if(runLocal) {
+    http("Req:4 GET CONTINUE RE_AUTH URL")
+      .get("${reAuthContinue}")
+      .check(saveCsrfToken)
+      .check(
+        status.is(200),
+        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+      )
+  }
+  else http("Req:4 GET CONTINUE RE_AUTH URL")
+    .get("https://www.staging.tax.service.gov.uk"+s"$${reAuthContinue}")
     .check(saveCsrfToken)
     .check(
       status.is(200),
       currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
     )
+
+//  def getContinueReAuthUrl: HttpRequestBuilder = http("Req:4 GET CONTINUE RE_AUTH URL")
+//    .get("${reAuthContinue}")
+//    .check(saveCsrfToken)
+//    .check(
+//      status.is(200),
+//      currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+//    )
+
+
+
+
+
+
 
   def postContinueReAuthUrl: HttpRequestBuilder = http("Req:5 POST CONTINUE RE_AUTH URL")
     .post("${reAuthContinue}")
