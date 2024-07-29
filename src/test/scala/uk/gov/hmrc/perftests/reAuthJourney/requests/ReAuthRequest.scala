@@ -92,13 +92,20 @@ trait ReAuthRequest extends BaseRequests {
 //    )
 
 
-
-
-
-
-
-  def postContinueReAuthUrl: HttpRequestBuilder = http("Req:5 POST CONTINUE RE_AUTH URL")
-    .post("${reAuthContinue}")
+  def postContinueReAuthUrl: HttpRequestBuilder = if(runLocal) {
+    http("Req:5 POST CONTINUE RE_AUTH URL")
+      .post("${reAuthContinue}")
+      .formParam("""csrfToken""", """${csrfToken}""")
+      .formParam("""signInType""", "oneLogin")
+      .check(saveOlfgJourneyId)
+      .check(
+        status.is(303),
+        header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
+        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+      )
+  }
+  else http("Req:5 POST CONTINUE RE_AUTH URL")
+    .post("https://www.staging.tax.service.gov.uk"+s"$${reAuthContinue}")
     .formParam("""csrfToken""", """${csrfToken}""")
     .formParam("""signInType""", "oneLogin")
     .check(saveOlfgJourneyId)
@@ -107,6 +114,17 @@ trait ReAuthRequest extends BaseRequests {
       header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
       currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
     )
+
+//  def postContinueReAuthUrl: HttpRequestBuilder = http("Req:5 POST CONTINUE RE_AUTH URL")
+//    .post("${reAuthContinue}")
+//    .formParam("""csrfToken""", """${csrfToken}""")
+//    .formParam("""signInType""", "oneLogin")
+//    .check(saveOlfgJourneyId)
+//    .check(
+//      status.is(303),
+//      header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
+//      currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+//    )
 
   def getOlfgStartUrl: HttpRequestBuilder = http("Req:6 GET OLFG START URL")
     .get("${reAuthContinueWithOlfgStartUrl}")
