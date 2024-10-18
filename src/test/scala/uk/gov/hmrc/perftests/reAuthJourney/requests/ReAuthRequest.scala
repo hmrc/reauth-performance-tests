@@ -61,7 +61,7 @@ trait ReAuthRequest extends BaseRequests {
       .check(saveCsrfToken)
       .check(
         status.is(200),
-        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+        currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/sign-in/(.*)")
       )
   } else
     http("Req:4 GET CONTINUE RE_AUTH URL")
@@ -69,7 +69,7 @@ trait ReAuthRequest extends BaseRequests {
       .check(saveCsrfToken)
       .check(
         status.is(200),
-        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+        currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/sign-in/(.*)")
       )
 
   def postContinueReAuthUrl: HttpRequestBuilder = if (runLocal) {
@@ -81,7 +81,7 @@ trait ReAuthRequest extends BaseRequests {
       .check(
         status.is(303),
         header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
-        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+        currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/sign-in/(.*)")
       )
   } else
     http("Req:5 POST CONTINUE RE_AUTH URL")
@@ -92,7 +92,7 @@ trait ReAuthRequest extends BaseRequests {
       .check(
         status.is(303),
         header("Location").saveAs("reAuthContinueWithOlfgStartUrl"),
-        currentLocationRegex("(.*)/identity-provider-gateway/access-hmrc-services/sign-in/selector/(.*)")
+        currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/sign-in/(.*)")
       )
 
   def getOlfgStartUrl: HttpRequestBuilder = http("Req:6 GET OLFG START URL")
