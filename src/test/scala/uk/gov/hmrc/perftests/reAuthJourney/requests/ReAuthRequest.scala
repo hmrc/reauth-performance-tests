@@ -149,5 +149,5 @@ trait ReAuthRequest extends BaseRequests {
   def getContinueUrl: HttpRequestBuilder = http("Req:11 GET CONTINUE URL")
     .get("${continueUrl}")
     .check(status.is(303), currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"))
-    .check(headerRegex("Location", "(.*)/identity-provider-gateway/authorize/complete/(.*)"))
+    .check(headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/authorize/complete/(.*)"))
 }
