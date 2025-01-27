@@ -23,19 +23,19 @@ import uk.gov.hmrc.perftests.reAuthJourney.common.RequestFunctions._
 
 trait ReAuthRequest extends BaseRequests {
 
-  val cadUrl: String  = baseUrlFor("centralised-authorisation-demo")
+  val cadUrl: String  = baseUrlFor("centralised-authorisation-canary-frontend")
   val oljStub: String = baseUrlFor("one-login-stub")
 
   def getStartUrl: HttpRequestBuilder = http("Req:1 GET HOME")
-    .get(s"$cadUrl/centralised-authorisation-demo/home")
-    .check(status.is(200), currentLocationRegex("(.*)/centralised-authorisation-demo/home(.*)"))
+    .get(s"$cadUrl/centralised-authorisation-canary/home")
+    .check(status.is(200), currentLocationRegex("(.*)/centralised-authorisation-canary/home(.*)"))
 
   def getReAuthUrl: HttpRequestBuilder = http("Req:2 GET RE_AUTH")
-    .get(s"$cadUrl/centralised-authorisation-demo/RE_AUTH")
+    .get(s"$cadUrl/centralised-authorisation-canary/RE_AUTH")
     .check(
       status.is(303),
       header("Location").saveAs("reAuthUrl"),
-      currentLocationRegex("(.*)/centralised-authorisation-demo/RE_AUTH(.*)")
+      currentLocationRegex("(.*)/centralised-authorisation-canary/RE_AUTH(.*)")
     )
 
   def getNavigateReAuthUrl: HttpRequestBuilder = if (runLocal) {
