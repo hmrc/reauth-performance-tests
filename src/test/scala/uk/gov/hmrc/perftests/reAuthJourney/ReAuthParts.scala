@@ -22,18 +22,22 @@ import uk.gov.hmrc.perftests.reAuthJourney.requests.{BaseRequests, ReAuthRequest
 object ReAuthParts extends BaseRequests with ReAuthRequest{
   def AuthnJourney(): Seq[HttpRequestBuilder] = Seq(
 
-
-    getStartUrl,
-    getReAuthUrl,
-    getNavigateReAuthUrl,
-    getContinueReAuthUrl,
-    postContinueReAuthUrl,
+    getJourneyStartUrl,
+    getSignInSelectorUrl,
+    postSignInSelectorUrl,
     getOlfgStartUrl,
     getAuthorizeResponseOlfg,
     postSubmitJourney,
-    getAuthorizeResponseOlg,
+    getSignInContinueUrl,
+    getSignInCompleteUrl,
+    getSignInLocationRedirect,
+    getSignInHashRedirect,
+    getReAuthUrl,
+    getReAuthRedirect,
+    getOlfgStartUrl,
+    getAuthorizeResponseOlfg,
     postReSubmitJourney,
-    getContinueUrl
+    getReauthContinueUrl
 
 
   )
