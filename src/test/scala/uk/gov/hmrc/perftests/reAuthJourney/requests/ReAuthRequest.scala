@@ -19,16 +19,15 @@ package uk.gov.hmrc.perftests.reAuthJourney.requests
 import io.gatling.http.request.builder.HttpRequestBuilder
 import io.gatling.core.Predef._
 import io.gatling.http.Predef.{header, _}
-import uk.gov.hmrc.perftests.reAuthJourney.common.AppConfig.identityProviderGatewayFrontendUrl
+import uk.gov.hmrc.perftests.reAuthJourney.common.AppConfig._
 import uk.gov.hmrc.perftests.reAuthJourney.common.RequestFunctions._
 
 trait ReAuthRequest extends BaseRequests {
 
-  val cadUrl: String  = baseUrlFor("centralised-authorisation-canary-frontend")
   val oljStub: String = baseUrlFor("one-login-stub")
 
   def getJourneyStartUrl: HttpRequestBuilder = http("Get start of journey url")
-    .get(s"$cadUrl/centralised-authorisation-canary/RE_AUTH")
+    .get(s"$caCanaryFeServiceUrl/centralised-authorisation-canary/RE_AUTH")
     .check(
       status.is(303),
       header("Location").saveAs("signInPage"),
@@ -53,26 +52,27 @@ trait ReAuthRequest extends BaseRequests {
         currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/sign-in/(.*)")
       )
 
-  def postSignInSelectorUrl: HttpRequestBuilder = if (runLocal) {
-    http("POST Sign in selector page")
-      .post("${signInPage}")
-      .formParam("""csrfToken""", """${csrfToken}""")
-      .formParam("""signInType""", "oneLogin")
-      .check(
-        saveOlfgJourneyId,
-        status.is(303),
-        header("Location").saveAs("reAuthStartUrl")
-      )
-  } else
-    http("POST Sign in selector page")
-      .post(s"$identityProviderGatewayFrontendUrl$${signInPage}")
-      .formParam("""csrfToken""", """${csrfToken}""")
-      .formParam("""signInType""", "oneLogin")
-      .check(
-        saveOlfgJourneyId,
-        status.is(303),
-        header("Location").saveAs("reAuthStartUrl")
-      )
+  def postSignInSelectorUrl: HttpRequestBuilder =
+    if (runLocal) {
+      http("POST Sign in selector page")
+        .post("${signInPage}")
+        .formParam("""csrfToken""", """${csrfToken}""")
+        .formParam("""signInType""", "oneLogin")
+        .check(
+          saveOlfgJourneyId,
+          status.is(303),
+          header("Location").saveAs("reAuthStartUrl")
+        )
+    } else
+      http("POST Sign in selector page")
+        .post(s"$identityProviderGatewayFrontendUrl$${signInPage}")
+        .formParam("""csrfToken""", """${csrfToken}""")
+        .formParam("""signInType""", "oneLogin")
+        .check(
+          saveOlfgJourneyId,
+          status.is(303),
+          header("Location").saveAs("reAuthStartUrl")
+        )
 
   def getOlfgStartUrl: HttpRequestBuilder = http("GET reauth start url")
     .get("${reAuthStartUrl}")
@@ -118,44 +118,79 @@ trait ReAuthRequest extends BaseRequests {
       currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)")
     )
 
-  def getSignInCompleteUrl: HttpRequestBuilder = http("GET sign in complete url")
-    .get("${reauthSignInComplete}")
-    .check(
-      status.is(303),
-      header("Location").saveAs("reauthLocationRedirect"),
-      currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/authorize/complete?(.*)")
-    )
+  def getSignInCompleteUrl: HttpRequestBuilder =
+    if (runLocal) {
+      http("GET sign in complete url")
+        .get("${reauthSignInComplete}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reauthLocationRedirect"),
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/authorize/complete?(.*)"))
+    } else {
+      http("GET sign in complete url")
+        .get(s"$identityProviderGatewayFrontendUrl$${reauthSignInComplete}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reauthLocationRedirect"),
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/authorize/complete?(.*)"))
+    }
 
-  def getSignInLocationRedirect: HttpRequestBuilder = http("GET interact reference call from CA")
-    .get("${reauthLocationRedirect}")
-    .check(
-      status.is(303),
-      header("Location").saveAs("reauthHash"),
-      currentLocationRegex("(.*)/centralised-authorisation-server/interact(.*)")
-    )
+  def getSignInLocationRedirect: HttpRequestBuilder =
+    if (runLocal) {
+      http("GET interact reference call from CA")
+        .get("${reauthLocationRedirect}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reauthHash"),
+          currentLocationRegex("(.*)/centralised-authorisation-server/interact(.*)"))
+    } else {
+      http("GET interact reference call from CA")
+        .get(s"$authorisationServerFeUrl$${reauthLocationRedirect}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reauthHash"),
+          currentLocationRegex("(.*)/centralised-authorisation-server/interact(.*)"))
+    }
 
-  def getSignInHashRedirect: HttpRequestBuilder = http("GET Reauth hash redirect from CA")
-    .get("${reauthHash}")
-    .check(
-      status.is(303)
-    )
+  def getSignInHashRedirect: HttpRequestBuilder =
+    if (runLocal) {
+      http("GET Reauth hash redirect from CA")
+        .get("${reauthHash}")
+        .check(
+          status.is(303))
+    } else {
+      http("GET Reauth hash redirect from CA")
+        .get(s"$caCanaryFeServiceUrl$${reauthHash}")
+        .check(
+          status.is(303))
+    }
 
   def getReAuthUrl: HttpRequestBuilder = http("GET Reauth journey url")
-    .get(s"$cadUrl/centralised-authorisation-canary/RE_AUTH")
+    .get(s"$caCanaryFeServiceUrl/centralised-authorisation-canary/RE_AUTH")
     .check(
       status.is(303),
       header("Location").saveAs("reauthRedirect"),
       currentLocationRegex("(.*)/centralised-authorisation-canary/RE_AUTH")
     )
 
-  def getReAuthRedirect: HttpRequestBuilder = http("GET Reauth redirect url")
-    .get("${reauthRedirect}")
-    .check(
-      status.is(303),
-      header("Location").saveAs("reAuthStartUrl"),
-      saveOlfgJourneyId,
-      currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/reauth(.*)")
-    )
+  def getReAuthRedirect: HttpRequestBuilder =
+    if (runLocal) {
+      http("GET Reauth redirect url")
+        .get("${reauthRedirect}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reAuthStartUrl"),
+          saveOlfgJourneyId,
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/reauth(.*)"))
+    } else {
+      http("GET Reauth redirect url")
+        .get(s"$authorisationServerFeUrl$${reauthRedirect}")
+        .check(
+          status.is(303),
+          header("Location").saveAs("reAuthStartUrl"),
+          saveOlfgJourneyId,
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/identity/reauth(.*)"))
+    }
 
 
   def postReSubmitJourney: HttpRequestBuilder = http("POST reauth sign in")
@@ -176,10 +211,20 @@ trait ReAuthRequest extends BaseRequests {
       currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"),
       header("Location").saveAs("reauthContinueUrl"))
 
-  def getReauthContinueUrl: HttpRequestBuilder = http("GET continue url")
-    .get("${reauthContinueUrl}")
-    .check(
-      status.is(303),
-      currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
-      headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
+  def getReauthContinueUrl: HttpRequestBuilder =
+    if (runLocal) {
+      http("GET reauth journey complete continue url")
+        .get("${reauthContinueUrl}")
+        .check(
+          status.is(303),
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
+          headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
+    } else {
+      http("GET reauth journey complete continue url")
+        .get(s"$identityProviderGatewayFrontendUrl$${reauthContinueUrl}")
+        .check(
+          status.is(303),
+          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
+          headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
+    }
 }

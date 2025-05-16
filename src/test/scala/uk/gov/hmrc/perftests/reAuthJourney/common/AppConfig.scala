@@ -23,4 +23,10 @@ object AppConfig extends ServicesConfiguration {
   private val identityProviderGatewayFrontendBaseUrl: String = baseUrlFor("identity-provider-gateway-frontend")
   val identityProviderGatewayFrontendUrl: String = s"$identityProviderGatewayFrontendBaseUrl"
 
+  private val authorisationServerFeBaseUrl: String = baseUrlFor("centralised-authorisation-server-frontend")
+  val authorisationServerFeUrl: String = authorisationServerFeBaseUrl
+
+  private val centralisedAuthorisationCanaryFrontendBaseUrl: String = baseUrlFor("centralised-authorisation-canary-frontend")
+  val caCanaryFeServiceUrl: String = centralisedAuthorisationCanaryFrontendBaseUrl
+
 }
