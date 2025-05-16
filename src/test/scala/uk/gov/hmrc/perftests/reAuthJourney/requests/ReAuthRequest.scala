@@ -211,20 +211,10 @@ trait ReAuthRequest extends BaseRequests {
       currentLocationRegex("(.*)/one-login-stub/authorize?(.*)"),
       header("Location").saveAs("reauthContinueUrl"))
 
-  def getReauthContinueUrl: HttpRequestBuilder =
-    if (runLocal) {
-      http("GET reauth journey complete continue url")
-        .get("${reauthContinueUrl}")
-        .check(
-          status.is(303),
-          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
-          headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
-    } else {
-      http("GET reauth journey complete continue url")
-        .get(s"$identityProviderGatewayFrontendUrl$${reauthContinueUrl}")
-        .check(
-          status.is(303),
-          currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
-          headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
-    }
+  def getReauthContinueUrl: HttpRequestBuilder = http("GET reauth journey complete continue url")
+    .get("${reauthContinueUrl}")
+    .check(
+      status.is(303),
+      currentLocationRegex("(.*)/sign-in-to-hmrc-online-services/one-login/continue?(.*)"),
+      headerRegex("Location", "(.*)/sign-in-to-hmrc-online-services/identity/reauth/complete(.*)"))
 }
