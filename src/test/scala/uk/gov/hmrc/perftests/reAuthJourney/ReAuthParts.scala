@@ -19,14 +19,21 @@ package uk.gov.hmrc.perftests.reAuthJourney
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.perftests.reAuthJourney.requests.{BaseRequests, ReAuthRequest}
 
-object ReAuthParts extends BaseRequests with ReAuthRequest{
+object ReAuthParts extends BaseRequests with ReAuthRequest {
   def AuthnJourney(): Seq[HttpRequestBuilder] = Seq(
-
     getJourneyStartUrl,
+
+    // Private Beta Pages Start
+    redirectToConfirmYourGovUkOneLoginEmailAddressPage,
+    postToConfirmYourGovUkOneLoginEmailAddressPage,
+    getToConfirmYourGovUkOneLoginEmailAddressPage,
+    postToConfirmYourGovUkOneLoginEmailAddressPageLocation,
+    getStartOlfgJourney,
+    // Private Beta Pages End
     getSignInSelectorUrl,
-    postSignInSelectorUrl,
-    getOlfgStartUrl,
-    getAuthorizeResponseOlfg,
+//    postSignInSelectorUrl
+//    getOlfgStartUrl,
+//    getAuthorizeResponseOlfg,
     postSubmitJourney,
     getSignInContinueUrl,
     getSignInCompleteUrl,
@@ -38,7 +45,5 @@ object ReAuthParts extends BaseRequests with ReAuthRequest{
     getAuthorizeResponseOlfg,
     postReSubmitJourney,
     getReauthContinueUrl
-
-
   )
 }
